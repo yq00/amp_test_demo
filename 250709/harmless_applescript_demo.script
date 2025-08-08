@@ -1,0 +1,124 @@
+-- 无害化AppleScript恶意软件演示
+-- 仅用于安全研究和教育目的
+
+on harmless_demo()
+	-- 设置演示目录
+	set demo_dir to "/tmp/harmless_demo/"
+	set demo_path to POSIX file demo_dir
+	
+	-- 创建演示目录
+	do shell script "mkdir -p " & quoted form of demo_dir
+	
+	-- 1. 模拟密码收集演示
+	log "🔐 模拟密码收集过程..."
+	set demo_password to "demo_password_123"
+	set password_file to demo_dir & "collected_password.txt"
+	do shell script "echo '模拟收集的密码: " & demo_password & "' > " & quoted form of password_file
+	do shell script "echo '收集时间: " & (current date as string) & "' >> " & quoted form of password_file
+	do shell script "echo '注意: 这只是演示，不是真实密码' >> " & quoted form of password_file
+	
+	-- 2. 模拟浏览器数据窃取演示
+	log "🌐 模拟浏览器数据窃取..."
+	set browsers to {"Chrome", "Firefox", "Safari"}
+	repeat with browser in browsers
+		set browser_dir to demo_dir & "Stolen_" & browser & "/"
+		do shell script "mkdir -p " & quoted form of browser_dir
+		
+		-- 创建模拟的cookies文件
+		set cookies_file to browser_dir & "cookies.txt"
+		do shell script "echo '# 模拟 " & browser & " cookies 数据' > " & quoted form of cookies_file
+		do shell script "echo '# 窃取时间: " & (current date as string) & "' >> " & quoted form of cookies_file
+		do shell script "echo '# 注意: 这只是演示数据' >> " & quoted form of cookies_file
+	end repeat
+	
+	-- 3. 模拟加密货币钱包窃取演示
+	log "💰 模拟加密货币钱包窃取..."
+	set wallets to {"MetaMask", "Electrum", "Exodus", "Atomic", "Wasabi"}
+	set wallet_dir to demo_dir & "Stolen_Wallets/"
+	do shell script "mkdir -p " & quoted form of wallet_dir
+	
+	repeat with wallet in wallets
+		set wallet_path to wallet_dir & wallet & "/"
+		do shell script "mkdir -p " & quoted form of wallet_path
+		
+		-- 创建模拟的钱包文件
+		set wallet_file to wallet_path & "wallet.dat"
+		do shell script "echo '# 模拟 " & wallet & " 钱包数据' > " & quoted form of wallet_file
+		do shell script "echo '# 窃取时间: " & (current date as string) & "' >> " & quoted form of wallet_file
+	end repeat
+	
+	-- 4. 模拟文件窃取演示
+	log "📁 模拟文件窃取..."
+	set files_dir to demo_dir & "Stolen_Files/"
+	do shell script "mkdir -p " & quoted form of files_dir
+	
+	set sensitive_files to {"document.pdf", "wallet.key", "private.txt", "password.kdbx"}
+	repeat with file_name in sensitive_files
+		set file_path to files_dir & file_name
+		do shell script "echo '# 模拟敏感文件: " & file_name & "' > " & quoted form of file_path
+		do shell script "echo '# 窃取时间: " & (current date as string) & "' >> " & quoted form of file_path
+	end repeat
+	
+	-- 5. 模拟远程代码执行演示
+	log "🚀 模拟远程代码执行..."
+	set remote_script to demo_dir & "downloaded_script.py"
+	do shell script "echo '#!/usr/bin/env python3' > " & quoted form of remote_script
+	do shell script "echo '# 模拟从远程下载的恶意脚本' >> " & quoted form of remote_script
+	do shell script "echo '# 原始URL: https://00704ae865ee.ngrok.app/asset.py' >> " & quoted form of remote_script
+	do shell script "echo '# 注意: 这只是演示' >> " & quoted form of remote_script
+	do shell script "echo 'print(\"模拟恶意脚本执行...\")' >> " & quoted form of remote_script
+	
+	-- 6. 模拟数据外泄演示
+	log "📤 模拟数据外泄..."
+	set exfil_file to demo_dir & "exfiltrated_data.zip"
+	do shell script "echo '# 模拟外泄数据压缩包' > " & quoted form of exfil_file
+	do shell script "echo '# 原始命令: ditto -c -k --sequesterRsrc /tmp/lovemrtrump/ /tmp/out.zip' >> " & quoted form of exfil_file
+	do shell script "echo '# 上传URL: https://meshsorterio.com/api/data/receive' >> " & quoted form of exfil_file
+	
+	-- 7. 生成演示报告
+	log "📊 生成演示报告..."
+	set report_file to demo_dir & "demo_report.txt"
+	do shell script "echo '=' > " & quoted form of report_file
+	do shell script "echo '恶意软件行为演示摘要' >> " & quoted form of report_file
+	do shell script "echo '=' >> " & quoted form of report_file
+	do shell script "echo '演示时间: " & (current date as string) & "' >> " & quoted form of report_file
+	do shell script "echo '演示类型: AppleScript Malware Behavior Simulation' >> " & quoted form of report_file
+	do shell script "echo '状态: HARMLESS_DEMO' >> " & quoted form of report_file
+	do shell script "echo '' >> " & quoted form of report_file
+	do shell script "echo '🎯 演示的功能模块:' >> " & quoted form of report_file
+	do shell script "echo '• 密码收集和验证' >> " & quoted form of report_file
+	do shell script "echo '• 浏览器数据窃取' >> " & quoted form of report_file
+	do shell script "echo '• 加密货币钱包窃取' >> " & quoted form of report_file
+	do shell script "echo '• 敏感文件窃取' >> " & quoted form of report_file
+	do shell script "echo '• 远程代码执行' >> " & quoted form of report_file
+	do shell script "echo '• 数据外泄' >> " & quoted form of report_file
+	do shell script "echo '' >> " & quoted form of report_file
+	do shell script "echo '⚠️ 重要说明:' >> " & quoted form of report_file
+	do shell script "echo '• 这只是演示，所有操作都是无害的' >> " & quoted form of report_file
+	do shell script "echo '• 没有访问真实的系统数据' >> " & quoted form of report_file
+	do shell script "echo '• 没有执行真实的恶意代码' >> " & quoted form of report_file
+	do shell script "echo '• 仅用于安全研究和教育目的' >> " & quoted form of report_file
+	
+	-- 显示完成信息
+	log "✅ 演示完成！"
+	log "📁 演示输出目录: " & demo_dir
+	log "📄 演示报告: demo_report.txt"
+	
+	-- 显示摘要
+	display dialog "🎭 恶意软件行为演示完成
+
+📁 演示输出目录: " & demo_dir & "
+
+🔍 演示内容:
+• 密码收集机制
+• 浏览器数据窃取
+• 加密货币钱包窃取
+• 敏感文件窃取
+• 远程代码执行
+• 数据外泄过程
+
+✅ 所有操作都是无害的模拟" buttons {"确定"} default button "确定" with title "AppleScript恶意软件演示"
+end harmless_demo
+
+-- 主函数
+harmless_demo() 
