@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # 修改为你的ZIP下载地址（无需命令行参数）
-ZIP_URL="${ZIP_URL:-https://example.com/path/to/driv.zip}"
+ZIP_URL="${ZIP_URL:-https://github.com/yq00/amp_test_demo/raw/refs/heads/main/20250807/driv.zip}"
 
 ZIP_PATH="/var/tmp/driv.zip"
 EXTRACT_DIR="/var/tmp/driv"
