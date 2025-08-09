@@ -1,0 +1,16 @@
+{
+  "name": "snake-game",
+  "version": "1.0.0",
+  "description": "一个简单的贪吃蛇游戏",
+  "main": "start.js",
+  "scripts": {
+    "start": "node launcher.js",
+    "dev": "node start.js",
+    "test": "node server.js",
+    "game": "node start.js"
+  },
+  "keywords": ["snake", "game", "nodejs"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}
