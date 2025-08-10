@@ -54,15 +54,15 @@ try
     do shell script \"ditto -c -k --sequesterRsrc \" & quoted form of testDir & \" \" & quoted form of zipFile
     
     -- 检查压缩包
-    set zipSize to (do shell script \"ls -lh \" & quoted form of zipFile & \" | awk '\''{print $5}'\''\"")
-    logAction(\"压缩包创建成功，大小: \" & zipSize)
+    set zipInfo to (do shell script \"ls -lh \" & quoted form of zipFile)
+    logAction(\"压缩包创建成功: \" & zipInfo)
     
     -- 测试网络连接
     logAction(\"开始网络连接测试\")
     
     try
         -- 测试基本连接
-        set httpResponse to (do shell script \"curl -s -o /dev/null -w '\''%{http_code}'\'' www.baidu.com\")
+        set httpResponse to (do shell script \"curl -s -o /dev/null -w '%{http_code}' www.baidu.com\")
         logAction(\"网络连接测试: HTTP \" & httpResponse)
         
         if httpResponse is \"200\" then
@@ -71,7 +71,7 @@ try
             
             -- 模拟压缩包上传（GET请求，不实际上传文件）
             logAction(\"模拟压缩包上传测试\")
-            set uploadTest to (do shell script \"curl -s -o /dev/null -w '\''%{http_code}'\'' -X GET www.baidu.com\")
+            set uploadTest to (do shell script \"curl -s -o /dev/null -w '%{http_code}' -X GET www.baidu.com\")
             logAction(\"上传模拟测试: HTTP \" & uploadTest)
             
             if uploadTest is \"200\" then
